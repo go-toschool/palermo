@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthService {
+  rpc Get(GetRequest) returns (GetResponse) {}
+  rpc Create(CreateRequest) returns (CreateResponse) {}
+  rpc Update(UpdateRequest) returns (UpdateResponse) {}
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+}
+
+message User {
+  string user_id  = 1;
+  string fullname = 2;
+  string email    = 3;
+
+  string token    = 4;
+}
+
+message Session {
+  string id        = 1;
+  string user_id   = 2;
+  string email     = 3;
+  string token     = 4;
+  int64 created_at = 5;
+  int64 updated_at = 6;
+}
+
+message SessionCredentials {
+  string validation_token = 1;
+  string auth_token       = 2;
+}
+
+message GetRequest {
+  SessionCredentials data = 1;
+}
+
+message GetResponse {
+  Session data = 1;
+}
+
+
+message CreateRequest {
+  Session data = 1;
+}
+
+message CreateResponse {
+  SessionCredentials data = 1;
+}
+
+message UpdateRequest {
+  SessionCredentials data = 1;
+}
+
+message UpdateResponse {
+  Session data = 1;
+}
+
+message DeleteRequest {
+  string user_id = 1;
+}
+
+message DeleteResponse {
+  User data = 1;
+}
