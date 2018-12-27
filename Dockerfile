@@ -6,4 +6,4 @@ COPY bin/palermo /usr/bin/palermo
 
 EXPOSE 8003
 
-ENTRYPOINT ["palermo"]
+ENTRYPOINT palermo
