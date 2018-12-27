@@ -17,7 +17,7 @@ run r: proto
 	@echo "[running] Running service..."
 	@go run cmd/server/main.go
 
-build b:
+build b: proto
 	@echo "[build] Building service..."
 	@cd cmd/server && $(GO) build -o $(BIN) -ldflags=$(LDFLAGS) -tags $(TAGS)
 
