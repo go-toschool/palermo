@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/go-toschool/palermo"
 	"github.com/go-toschool/palermo/auth"
 	"github.com/go-toschool/palermo/jwt"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	_ "github.com/lib/pq"
@@ -21,6 +23,20 @@ const (
 	authTokenMaxAge     = 25 * time.Minute
 	authTokenCookieName = "access_token"
 )
+
+func init() {
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: true,
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "timestamp",
+			logrus.FieldKeyLevel: "severity",
+			logrus.FieldKeyMsg:   "message",
+		},
+		TimestampFormat: time.RFC3339Nano,
+	})
+	logrus.SetOutput(os.Stdout)
+}
 
 func main() {
 	port := flag.Int64("port", 8003, "listening port")
@@ -57,6 +73,7 @@ type AuthService struct {
 
 // Get ...
 func (as *AuthService) Get(ctx context.Context, gr *auth.GetRequest) (*auth.GetResponse, error) {
+	logrus.Info("AuthService: Method Get")
 	s, err := as.SessionService.Session(&palermo.SessionCredentials{
 		ValidationToken: gr.Data.ValidationToken,
 		AuthToken:       gr.Data.AuthToken,
@@ -79,6 +96,7 @@ func (as *AuthService) Get(ctx context.Context, gr *auth.GetRequest) (*auth.GetR
 
 // Create ...
 func (as *AuthService) Create(ctx context.Context, gr *auth.CreateRequest) (*auth.CreateResponse, error) {
+	logrus.Info("AuthService: Method Create")
 	ss, err := as.SessionService.CreateSession(&palermo.Session{
 		ID:        gr.Data.Id,
 		UserID:    gr.Data.UserId,
@@ -101,6 +119,7 @@ func (as *AuthService) Create(ctx context.Context, gr *auth.CreateRequest) (*aut
 
 // Update ...
 func (as *AuthService) Update(ctx context.Context, gr *auth.UpdateRequest) (*auth.UpdateResponse, error) {
+	logrus.Info("AuthService: Method Update")
 	s, err := as.SessionService.RefreshSession(&palermo.SessionCredentials{
 		ValidationToken: gr.Data.ValidationToken,
 		AuthToken:       gr.Data.AuthToken,
@@ -123,5 +142,6 @@ func (as *AuthService) Update(ctx context.Context, gr *auth.UpdateRequest) (*aut
 
 // Delete ...
 func (as *AuthService) Delete(ctx context.Context, gr *auth.DeleteRequest) (*auth.DeleteResponse, error) {
+	logrus.Info("AuthService: Method Delete")
 	return nil, nil
 }
